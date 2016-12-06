@@ -1,0 +1,1 @@
+Haskell Earthquake mapper, by Quinn, Holly and Joe
