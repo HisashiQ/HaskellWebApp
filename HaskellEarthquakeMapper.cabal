@@ -15,16 +15,14 @@ cabal-version:       >=1.10
 
 library
   hs-source-dirs:      src
-  exposed-modules:     DB
-                     , Download
-                     , Type
-                     , Lib
+  exposed-modules:     DownloadData_x
+                     , Parser_x
   build-depends:       base >= 4.7 && < 5
                      , HTTP
                      , network-uri
-                     , HDBC
-                     , HDBC-sqlite3
                      , dates
+                     , split
+                     , HDBC
   default-language:    Haskell2010
 
 executable HaskellEarthquakeMapper-exe
