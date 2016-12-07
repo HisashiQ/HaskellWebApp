@@ -1,8 +1,8 @@
-module DB (dbConnect,initialiseDB,insertDB) where 
+module DB where 
 
 import Database.HDBC
 import Database.HDBC.Sqlite3
-import Type
+import Types
 
 dbConnect :: IO Connection
 dbConnect = do
@@ -16,7 +16,7 @@ initialiseDB = do
    tables <- getTables conn
    if not (elem "events" tables) then do
    	  run conn "CREATE TABLE events (date DATE, time TIME, place VARCHAR(40), magnitude DECIMAL, latitude DECIMAL, longitude DECIMAL, depth DECIMAL)" []
-      commit conn
+      --commit conn
       putStrLn "Database initialised!"
    else
       return ()

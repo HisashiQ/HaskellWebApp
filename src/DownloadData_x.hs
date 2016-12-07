@@ -18,3 +18,5 @@ downloadURL url =
                _ -> return $ Left (show r)
     where request = Request {rqURI = uri, rqMethod = GET, rqHeaders = [],rqBody = ""}
           uri = fromJust $ parseURI url
+
+
