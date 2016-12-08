@@ -1,4 +1,4 @@
-module DB where 
+module DB where
 
 import Database.HDBC
 import Database.HDBC.Sqlite3
@@ -15,7 +15,7 @@ initialiseDB = do
   conn <- dbConnect
   tables <- getTables conn
   if not (elem "events" tables) then do
-    run conn "CREATE TABLE events (time DECIMAL, place VARCHAR(40), magnitude DECIMAL, latitude DECIMAL, longitude DECIMAL, depth DECIMAL, url VARCHAR(40))" []
+    run conn "CREATE TABLE events (year INTEGER, month SMALLINT, day SMALLINT, place VARCHAR(40), magnitude DECIMAL, latitude DECIMAL, longitude DECIMAL, depth DECIMAL, url VARCHAR(40))" []
     commit conn
     putStrLn "Database initialised!"
   else
@@ -24,8 +24,10 @@ initialiseDB = do
 insertDB :: Earthquake -> IO ()  --Assuming we have a data type called "Earthquake"
 insertDB event = do
    conn <- dbConnect
-   let query = "INSERT INTO events VALUES (?,?,?,?,?,?,?)"
-   let record = [ toSql.time $ event   --Assuming Earthquake has variables called date, time, etc...
+   let query = "INSERT INTO events VALUES (?,?,?,?,?,?,?,?,?)"
+   let record = [ toSql.year $ event
+                , toSql.month $ event
+                , toSql.day $ event
                 , toSql.place $ event
                 , toSql.magnitude $ event
                 , toSql.latitude $ event
@@ -33,7 +35,7 @@ insertDB event = do
                 , toSql.depth $ event
                 , toSql.url $ event
                 ]
-   run conn query record 
+   run conn query record
    commit conn
    disconnect conn
 
@@ -56,9 +58,3 @@ getFromDB request = do
 	else if a then b --What other query? Earthquakes in a given lat-long rectangle? Earthquakes on a given continent?
     quickQuery conn query
     disconnect conn--}
-
-
-
-
-	
-

@@ -7,20 +7,15 @@ import System.IO
 import Types
 import DB
 
-main = do 
+main = do
      d <- downloadURL "http://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=2016-12-01&endtime=2016-12-02"
      let earthquakeStrings = getEarthquakes d
      let earthquakeData = map makeEarthquake earthquakeStrings
 
      dbConnect
      initialiseDB
-     insertDB (earthquakeData !! 10)
-     insertDB (earthquakeData !! 11)
+     mapM_ insertDB earthquakeData
 
      db <- getWholeDB
      let dbContents = getDbContentsAsList db
      mapM_ print $ dbContents
-
-
-
- 
