@@ -13,6 +13,7 @@ data Earthquake = Earthquake { year :: Int
                              , url :: String
                              } deriving Show
 
+makeEarthquake :: String -> Earthquake
 makeEarthquake x = Earthquake { year = getYear $ (read $ take 10 $ getProperty "time" x)
                               , month = getMonth $ (read $ take 10 $ getProperty "time" x)
                               , day = getDay $ (read $ take 10 $ getProperty "time" x)
@@ -23,3 +24,18 @@ makeEarthquake x = Earthquake { year = getYear $ (read $ take 10 $ getProperty "
                               , depth = (getCoordinates x) !! 2
                               , url = init.tail $ getProperty "url" x
                               }
+
+data Region = Region { name :: String
+                     , latFrom :: Double
+                     , latTo :: Double
+                     , longFrom :: Double
+                     , longTo :: Double
+                     } deriving Show
+
+makeRegion :: [String] -> Region
+makeRegion xs = Region { name = ( xs !! 0)
+                       , latFrom = ( read $ xs !! 1 )
+                       , latTo = ( read $ xs !! 2)
+                       , longFrom = ( read $ xs !! 3)
+                       , longTo = ( read $ xs !! 4)
+                       }
