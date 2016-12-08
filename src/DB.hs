@@ -21,11 +21,11 @@ initialiseDB = do
   else
     return ()
 
-insertDB :: Earthquake -> IO ()  --Assuming we have a data type called "Earthquake"
+insertDB :: Earthquake -> IO ()  
 insertDB event = do
    conn <- dbConnect
    let query = "INSERT INTO events VALUES (?,?,?,?,?,?,?)"
-   let record = [ toSql.time $ event   --Assuming Earthquake has variables called date, time, etc...
+   let record = [ toSql.time $ event   
                 , toSql.place $ event
                 , toSql.magnitude $ event
                 , toSql.latitude $ event
@@ -37,11 +37,12 @@ insertDB event = do
    commit conn
    disconnect conn
 
-getWholeDB :: IO [[SqlValue]]
-getWholeDB = do
+getFromDB :: String -> IO [[SqlValue]]
+getFromDB xs = do
   conn <- dbConnect
-  let query = "SELECT * FROM events"
+  let query = "SELECT * FROM " ++ xs
   quickQuery' conn query []
+
 
 getDbContentsAsList :: [[SqlValue]] -> [[String]]
 getDbContentsAsList x = map (map fromSql) x
