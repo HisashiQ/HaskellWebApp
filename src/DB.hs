@@ -45,6 +45,12 @@ getFromDB xs = do
   let query = "SELECT * FROM " ++ xs
   quickQuery' conn query []
 
+-- getFromDB :: IO [[SqlValue]]
+-- getFromDB = do
+--   conn <- dbConnect
+--   let query = "SELECT * FROM events"
+--   quickQuery' conn query []
+
 
 getDbContentsAsList :: [[SqlValue]] -> [[String]]
 getDbContentsAsList x = map (map fromSql) x

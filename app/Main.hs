@@ -25,10 +25,11 @@ main = do
      let regions = createRegions
      mapM_ insertRegion regions
 
-     let userSelection = "N. America"
+     let userSelection = "Asia"
 
      --get selected region from database and create region
      regionDb <- getFromDB $ "regions WHERE region == \"" ++ userSelection ++ "\""
+     --regionDb <- getFromDB $ "regions"
      let r = map makeRegion $ getDbContentsAsList regionDb
 
      --get lat/long values as strings
@@ -40,6 +41,6 @@ main = do
 
      --get earthquakes in given region
      matchingEarthquakes <- getFromDB $ "events WHERE latitude >= " ++ a ++ " AND latitude < " ++ b ++ " AND longitude >= " ++ c ++ " AND longitude < " ++ d
-
+     --matchingEarthquakes <- getFromDB
      --print out matching earthquakes
      mapM_ print $ getDbContentsAsList matchingEarthquakes

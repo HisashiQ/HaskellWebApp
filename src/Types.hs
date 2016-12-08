@@ -19,8 +19,8 @@ makeEarthquake x = Earthquake { year = getYear $ (read $ take 10 $ getProperty "
                               , day = getDay $ (read $ take 10 $ getProperty "time" x)
                               , place = init.tail $ getProperty "place" x
                               , magnitude = read $ getProperty "mag" x
-                              , longitude = (getCoordinates x) !! 1
-                              , latitude = (getCoordinates x) !! 0
+                              , longitude = (getCoordinates x) !! 0
+                              , latitude = (getCoordinates x) !! 1
                               , depth = (getCoordinates x) !! 2
                               , url = init.tail $ getProperty "url" x
                               }
