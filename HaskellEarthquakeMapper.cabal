@@ -27,6 +27,8 @@ library
                      , split
                      , HDBC
                      , HDBC-sqlite3
+                     , unix-time
+                     , old-time >= 1.1.0.3
   default-language:    Haskell2010
 
 executable HaskellEarthquakeMapper-exe

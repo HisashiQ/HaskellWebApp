@@ -8,7 +8,7 @@ import Types
 import DB
 import RegionsDB
 
-main = do 
+main = do
      --Download json
      d <- downloadURL "http://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=2016-12-01&endtime=2016-12-02"
      let earthquakeStrings = getEarthquakes d
@@ -18,7 +18,7 @@ main = do
      initialiseDB
      --insert earthquakes
      mapM_ insertDB earthquakeData
-    
+
      --Add regions table to db
      createRegionsTable
      --insert regions
@@ -39,14 +39,7 @@ main = do
 
 
      --get earthquakes in given region
-     matchingEarthquakes <- getFromDB $ "events WHERE latitude >= " ++ a ++ " AND latitude < " ++ b ++ " AND longitude >= " ++ c ++ " AND longitude < " ++ d 
-  
+     matchingEarthquakes <- getFromDB $ "events WHERE latitude >= " ++ a ++ " AND latitude < " ++ b ++ " AND longitude >= " ++ c ++ " AND longitude < " ++ d
+
      --print out matching earthquakes
      mapM_ print $ getDbContentsAsList matchingEarthquakes
-
-
-
-
-
-
- 
