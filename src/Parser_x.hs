@@ -14,5 +14,5 @@ getProperty a b = head $ splitOn ",\"" $ last $ splitOn property b
     where property = "\"" ++ a ++ "\":"
 
 --Takes a raw earthquake string and returns a list of floats showing coordinates
-getCoordinates :: String -> [Float]
+getCoordinates :: String -> [Double]
 getCoordinates x = map read $ splitOn "," (init.init.tail $ getProperty "coordinates" x)

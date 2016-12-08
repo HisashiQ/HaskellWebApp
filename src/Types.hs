@@ -4,10 +4,10 @@ import Parser_x
 
 data Earthquake = Earthquake { time :: Integer
                              , place :: String
-                             , magnitude :: Float
-                             , longitude :: Float
-                             , latitude :: Float
-                             , depth :: Float
+                             , magnitude :: Double
+                             , longitude :: Double
+                             , latitude :: Double
+                             , depth :: Double
                              , url :: String
                              } deriving Show
 
