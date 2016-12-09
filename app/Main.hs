@@ -87,6 +87,7 @@ processUserInput x
             putStrLn "5 = Major (7 and up)"
             putStrLn "6 = Great (8 and up)"
             input <- getLine
+            processMagnitude input
             return input
       |(x == "region") = do
             putStrLn "Enter a region by number:"
@@ -116,6 +117,8 @@ processMagnitude x
                   callMagnitudeDB "7"
   | (x == "6") = do
                   callMagnitudeDB "8"
+  | otherwise = do
+  	              putStrLn "error"
 
 processRegion :: String -> IO ()
 processRegion x
@@ -138,7 +141,7 @@ processRegion x
 
 callMagnitudeDB :: String -> IO ()
 callMagnitudeDB x = do
-    matchingEarthquakes <- getFromDB $ "events WHERE magnitude >= " ++ x
+    matchingEarthquakes <- getFromDB $ "events WHERE magnitude >= "  ++ x
     mapM_ print $ getDbContentsAsList matchingEarthquakes
 
 callRegionDB :: String -> IO ()
