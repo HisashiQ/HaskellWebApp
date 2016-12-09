@@ -1,8 +1,8 @@
 module Main where
 
 import Database.HDBC
-import DownloadData_x
-import Parser_x
+import DownloadData
+import Parser
 import System.IO
 import Types
 import DB

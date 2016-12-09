@@ -1,6 +1,6 @@
 module Types where
 
-import Parser_x
+import Parser
 
 data Earthquake = Earthquake { year :: Int
                              , month :: Int

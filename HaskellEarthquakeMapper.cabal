@@ -15,8 +15,8 @@ cabal-version:       >=1.10
 
 library
   hs-source-dirs:      src
-  exposed-modules:     DownloadData_x
-                     , Parser_x
+  exposed-modules:     DownloadData
+                     , Parser
                      , Types
                      , DB
                      , RegionsDB
