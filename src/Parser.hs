@@ -41,14 +41,12 @@ getMonth x = monthInt (getUTC x)
 
 getDay x = ctDay (getUTC x)
 
---Checks if entered correct number
-dateOrMag :: String -> String
-dateOrMag x = case x of
-                   null -> do putStrLn "Nothing entered, please enter 1 or 2"
-                              line <- getLine
-                              dateOrMag line
-                   "1" -> do return "date"
-                   "2" -> do return "time"
-                   _ -> do putStrLn "Please enter 1 or 2"
-                           line <- getLine
-                           dateOrMag line
+--Checks if want date or magnitude
+dateOrMag :: String -> IO (String)
+dateOrMag line
+    | (line == "1") = do (return "date")
+    | (line == "2") = do (return "magnitude")
+    | otherwise = do
+        putStrLn "Error, please enter again"
+        newline <- getLine
+        dateOrMag newline
