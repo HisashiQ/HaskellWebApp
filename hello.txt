@@ -1,1 +1,0 @@
-eqfeed_callback({"type":"FeatureCollection","features":[{4.6},]});
