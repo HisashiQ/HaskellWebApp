@@ -1,29 +1,37 @@
 module Types where
 
 import Parser
+import Data.Maybe 
+import Text.Read
 
-data Earthquake = Earthquake { year :: Int
-                             , month :: Int
-                             , day :: Int
+data Earthquake = Earthquake { year :: Maybe Int
+                             , month :: Maybe Int
+                             , day :: Maybe Int
                              , place :: String
-                             , magnitude :: Double
-                             , longitude :: Double
-                             , latitude :: Double
-                             , depth :: Double
+                             , magnitude :: Maybe Double
+                             , longitude :: Maybe Double
+                             , latitude :: Maybe Double
+                             , depth :: Maybe Double
                              , url :: String
-                             } deriving Show
+                             } deriving Show 
 
 makeEarthquake :: String -> Earthquake
-makeEarthquake x = Earthquake { year = getYear $ (read $ take 10 $ getProperty "time" x)
-                              , month = getMonth $ (read $ take 10 $ getProperty "time" x)
-                              , day = getDay $ (read $ take 10 $ getProperty "time" x)
+makeEarthquake x = Earthquake { year = getYear $ (readMaybe $ take 10 $ getProperty "time" x)
+                              , month = getMonth $ (readMaybe $ take 10 $ getProperty "time" x)
+                              , day = getDay $ (readMaybe $ take 10 $ getProperty "time" x)
                               , place = init.tail $ getProperty "place" x
-                              , magnitude = read $ getProperty "mag" x
+                              , magnitude = readMaybe $ getProperty "mag" x
                               , longitude = (getCoordinates x) !! 0
                               , latitude = (getCoordinates x) !! 1
                               , depth = (getCoordinates x) !! 2
                               , url = init.tail $ getProperty "url" x
                               }
+
+validateEarthquake :: Earthquake -> Bool
+validateEarthquake x
+    | elem Nothing [year x, month x, day x] || elem Nothing [magnitude x, longitude x, latitude x, depth x] == True = False
+    | otherwise = True
+
 
 data Region = Region { name :: String
                      , latFrom :: Double

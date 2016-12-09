@@ -4,6 +4,9 @@ import Data.List.Split
 import Data.List
 import Data.UnixTime as Unix
 import System.Time
+import Text.Read 
+import Data.Maybe
+
 
 --Takes the result of the http download and produces a list of raw earthquake data strings
 getEarthquakes :: Either String String -> [String]
@@ -16,15 +19,17 @@ getProperty a b = head $ splitOn ",\"" $ last $ splitOn property b
     where property = "\"" ++ a ++ "\":"
 
 --Takes a raw earthquake string and returns a list of floats showing coordinates
-getCoordinates :: String -> [Double]
-getCoordinates x = map read $ splitOn "," (init.init.tail $ getProperty "coordinates" x)
+getCoordinates :: String -> [Maybe Double]
+getCoordinates x = map readMaybe $ splitOn "," (init.init.tail $ getProperty "coordinates" x)
 
 getUTC x = toUTCTime (Unix.toClockTime (fromEpochTime x))
 
+getYear Nothing = Nothing
+getYear (Just x) = Just (ctYear (getUTC x))
 
-getYear x = ctYear (getUTC x)
 
-getMonth x = monthInt (getUTC x)
+getMonth Nothing = Nothing
+getMonth (Just x) = Just (monthInt (getUTC x))
   where monthInt x
            | ctMonth x == January = 01
            | ctMonth x == February = 02
@@ -39,16 +44,16 @@ getMonth x = monthInt (getUTC x)
            | ctMonth x == November = 11
            | ctMonth x == December = 12
 
-getDay x = ctDay (getUTC x)
+getDay Nothing = Nothing
+getDay (Just x) = Just (ctDay (getUTC x))
 
---Checks if entered correct number
-dateOrMag :: String -> String
-dateOrMag x = case x of
-                   null -> do putStrLn "Nothing entered, please enter 1 or 2"
-                              line <- getLine
-                              dateOrMag line
-                   "1" -> do return "date"
-                   "2" -> do return "time"
-                   _ -> do putStrLn "Please enter 1 or 2"
-                           line <- getLine
-                           dateOrMag line
+
+--Checks if want date or magnitude
+dateOrMag :: String -> IO (String)
+dateOrMag line
+	     | (line == "1") = do (return "date")
+	     | (line == "2") = do (return "time")
+	     | otherwise = do
+	     	putStrLn "Error, please enter again"
+	     	newline <- getLine
+	     	dateOrMag newline

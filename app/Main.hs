@@ -10,20 +10,11 @@ import RegionsDB
 
 main = do
 
---Checks if want date or magnitude
-dateOrMag :: String -> IO (String)
-dateOrMag line
-    | (line == "1") = do (return "date")
-    | (line == "2") = do (return "time")
-    | otherwise = do
-        putStrLn "Error, please enter again"
-        newline <- getLine
-        dateOrMag newline
-
 --Download json
-     d <- downloadURL "http://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=2016-12-01&endtime=2016-12-02"
+     d <- downloadURL "http://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=2016-11-01&endtime=2016-12-02"
      let earthquakeStrings = getEarthquakes d
      let earthquakeData = map makeEarthquake earthquakeStrings
+
 
      --Create db with events table
      initialiseDB
@@ -42,12 +33,12 @@ dateOrMag line
      let decision = dateOrMag line
 
 
-     db <- getWholeDB
-     let dbContents = getDbContentsAsList db
-     mapM_ print $ dbContents
+     --db <- getWholeDB
+     --let dbContents = getDbContentsAsList db
+     --mapM_ print $ dbContents
 
 
-     let userSelection = "Asia"
+     let userSelection = "Europe"
 
      --get selected region from database and create region
      regionDb <- getFromDB $ "regions WHERE region == \"" ++ userSelection ++ "\""
