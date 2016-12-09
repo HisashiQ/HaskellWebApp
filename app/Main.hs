@@ -34,7 +34,8 @@ main = do
      let decision = dateOrMag line
 
 
-     let userSelection = "Europe"
+
+     let userSelection = "Asia"
 
      --get selected region from database and create region
      regionDb <- getFromDB $ "regions WHERE region == \"" ++ userSelection ++ "\""
