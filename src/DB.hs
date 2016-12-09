@@ -56,10 +56,9 @@ getFromDB xs = do
 getDbContentsAsList :: [[SqlValue]] -> [[String]]
 getDbContentsAsList x = map (map fromSql) x
 
-createJson (x:xs) (b:bs) (y:ys) (z:zs) (a:as) = "{'type':'Feature','properties':{'mag':" ++ x ++ ",'place':'48km SSE of Pondaguitan, Philippines','time':1348176066,'tz':480,'url':'" ++ b ++ "','felt':2,'cdi':3.4,'mmi':null,'alert':null,'status':'REVIEWED','tsunami':null,'sig':'449','net':'us','code':'c000csx3','ids':',usc000csx3,','sources':',us,','types':',dyfi,eq-location-map,general-link,geoserve,historical-moment-tensor-map,historical-seismicity-map,nearby-cities,origin,p-wave-travel-times,phase-data,scitech-link,tectonic-summary,'},'geometry':{'type':'Point','coordinates':[" ++ y ++ "," ++ z ++ "," ++ a ++ "]},'id':'usc000csx3'}"
 
---THIS FUNCTION SHOULD BE RECURSIVE BUT I AM GETTING A NON-EXHASTIVE ERROR: SHOULD LOOK LIKE THIS
--- createJson (x:xs) (b:bs) (y:ys) (z:zs) (a:as) = "{'type':'Feature','properties':{'mag':" ++ x ++ ",'place':'48km SSE of Pondaguitan, Philippines','time':1348176066,'tz':480,'url':'" ++ b ++ "','felt':2,'cdi':3.4,'mmi':null,'alert':null,'status':'REVIEWED','tsunami':null,'sig':'449','net':'us','code':'c000csx3','ids':',usc000csx3,','sources':',us,','types':',dyfi,eq-location-map,general-link,geoserve,historical-moment-tensor-map,historical-seismicity-map,nearby-cities,origin,p-wave-travel-times,phase-data,scitech-link,tectonic-summary,'},'geometry':{'type':'Point','coordinates':[" ++ y ++ "," ++ z ++ "," ++ a ++ "]},'id':'usc000csx3'}" ++ "," ++ (createJson xs bs ys zs as)
+createJson [] [] [] [] [] = ""
+createJson (x:xs) (b:bs) (y:ys) (z:zs) (a:as) = "{'type':'Feature','properties':{'mag':" ++ x ++ ",'place':'48km SSE of Pondaguitan, Philippines','time':1348176066,'tz':480,'url':'" ++ b ++ "','felt':2,'cdi':3.4,'mmi':null,'alert':null,'status':'REVIEWED','tsunami':null,'sig':'449','net':'us','code':'c000csx3','ids':',usc000csx3,','sources':',us,','types':',dyfi,eq-location-map,general-link,geoserve,historical-moment-tensor-map,historical-seismicity-map,nearby-cities,origin,p-wave-travel-times,phase-data,scitech-link,tectonic-summary,'},'geometry':{'type':'Point','coordinates':[" ++ y ++ "," ++ z ++ "," ++ a ++ "]},'id':'usc000csx3'}" ++ "," ++ (createJson xs bs ys zs as)
 
 getMag x = x !! 4
 getUrl x =  x !! 8
