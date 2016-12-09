@@ -7,6 +7,7 @@ import System.IO
 import Types
 import DB
 import RegionsDB
+import System.Process
 
 main = do
 
@@ -52,4 +53,14 @@ main = do
      matchingEarthquakes <- getFromDB $ "events WHERE latitude >= " ++ a ++ " AND latitude < " ++ b ++ " AND longitude >= " ++ c ++ " AND longitude < " ++ d
      --matchingEarthquakes <- getFromDB
      --print out matching earthquakes
-     mapM_ print $ getDbContentsAsList matchingEarthquakes
+     let listOfInfo = getDbContentsAsList matchingEarthquakes
+
+     writeFile "earthquakeMap.json" "eqfeed_callback({'type':'FeatureCollection','features':["
+     appendFile "earthquakeMap.json" (getFullJson listOfInfo)
+     appendFile "earthquakeMap.json" "]});"
+
+    --  f <- createProcess (proc "open /Users/quinn/Code/Haskell/HaskellEarthquakeMapper/index.html" [])
+    --  r <- createProcess (proc "rm /Users/quinn/Code/Haskell/HaskellEarthquakeMapper/earthquakes.db" [])
+     f <- createProcess (shell "rm /Users/quinn/Code/Haskell/HaskellEarthquakeMapper/earthquakes.db")
+     r <- createProcess (shell "open index.html")
+     putStrLn "Opening browser"
