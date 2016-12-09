@@ -17,6 +17,7 @@ dbConnect = do
    return conn
 
 -- | Initialises the database creating tables
+
 initialiseDB :: IO ()
 initialiseDB = do
   conn <- dbConnect
@@ -64,6 +65,18 @@ getFromDB xs = do
 getDbContentsAsList :: [[SqlValue]] -> [[String]]
 getDbContentsAsList x = map (map fromSql) x
 
+
+createJson [] [] [] [] [] [] = ""
+createJson (x:xs) (k:ks) (b:bs) (y:ys) (z:zs) (a:as) = "{\"type\":\"Feature\",\"properties\":{\"mag\":" ++ x ++ ",\"place\":\"" ++ k ++ "\",\"time\":1348176066,\"tz\":480,\"url\":\"" ++ b ++ "\",\"felt\":2,\"cdi\":3.4,\"mmi\":null,\"alert\":null,\"status\":\"REVIEWED\",\"tsunami\":null,\"sig\":\"449\",\"net\":\"us\",\"code\":\"c000csx3\",\"ids\":\",usc000csx3,\",\"sources\":\",us,\",\"types\":\",dyfi,eq-location-map,general-link,geoserve,historical-moment-tensor-map,historical-seismicity-map,nearby-cities,origin,p-wave-travel-times,phase-data,scitech-link,tectonic-summary,\"},\"geometry\":{\"type\":\"Point\",\"coordinates\":[" ++ y ++ "," ++ z ++ "," ++ a ++ "]},\"id\":\"usc000csx3\"}" ++ "," ++ (createJson xs ks bs ys zs as)
+
+getMag x = x !! 4
+getUrl x =  x !! 8
+getLat x = x !! 6
+getLong x = x !! 5
+getDepth x = x !! 7
+getPlace x = x !! 3
+
+getFullJson a = createJson (map getMag a) (map getPlace a) (map getUrl a) (map getLat a) (map getLong a) (map getDepth a)
 
 {--getFromDB :: DBQuery -> IO [[SqlValue]] --Assuming we have a data type called "DBQuery"
 getFromDB request = do

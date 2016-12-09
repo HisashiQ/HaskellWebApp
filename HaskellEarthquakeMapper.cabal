@@ -39,6 +39,7 @@ executable HaskellEarthquakeMapper-exe
   build-depends:       base
                      , HDBC
                      , HaskellEarthquakeMapper
+                     , process
   default-language:    Haskell2010
 
 test-suite HaskellEarthquakeMapper-test
