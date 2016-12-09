@@ -7,16 +7,6 @@ import System.IO
 import Types
 import DB
 
---Checks if want date or magnitude
-dateOrMag :: String -> IO (String)
-dateOrMag line
-    | (line == "1") = do (return "date")
-    | (line == "2") = do (return "time")
-    | otherwise = do
-        putStrLn "Error, please enter again"
-        newline <- getLine
-        dateOrMag newline
-
 main = do 
      d <- downloadURL "http://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=2016-12-01&endtime=2016-12-02"
      let earthquakeStrings = getEarthquakes d
@@ -29,7 +19,8 @@ main = do
 
      putStrLn "Enter 1 for query by date or 2 for query by minimum magnitude"
      line <- getLine
-     let decision = dateOrMag line
+     dateOrMag line
+
 
 
      db <- getWholeDB
