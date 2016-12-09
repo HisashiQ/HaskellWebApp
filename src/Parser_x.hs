@@ -19,7 +19,6 @@ getProperty a b = head $ splitOn ",\"" $ last $ splitOn property b
 getCoordinates :: String -> [Double]
 getCoordinates x = map read $ splitOn "," (init.init.tail $ getProperty "coordinates" x)
 
-
 getUTC x = toUTCTime (Unix.toClockTime (fromEpochTime x))
 
 
@@ -41,3 +40,15 @@ getMonth x = monthInt (getUTC x)
            | ctMonth x == December = 12
 
 getDay x = ctDay (getUTC x)
+
+--Checks if entered correct number
+dateOrMag :: String -> String
+dateOrMag x = case x of
+                   null -> do putStrLn "Nothing entered, please enter 1 or 2"
+                              line <- getLine
+                              dateOrMag line
+                   "1" -> do return "date"
+                   "2" -> do return "time"
+                   _ -> do putStrLn "Please enter 1 or 2"
+                           line <- getLine
+                           dateOrMag line
