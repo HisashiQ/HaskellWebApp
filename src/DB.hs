@@ -3,6 +3,13 @@ module DB where
 import Database.HDBC
 import Database.HDBC.Sqlite3
 import Types
+import System.Directory
+import Control.Monad
+
+deleteOldDb :: IO ()
+deleteOldDb = do
+	exists <- doesFileExist "earthquakes.db"
+	when exists (removeFile "earthquakes.db")
 
 dbConnect :: IO Connection
 dbConnect = do

@@ -21,8 +21,8 @@ createRegions = map makeRegion [nAmerica,sAmerica,africa,europe,asia,australasia
     where
         nAmerica = ["N. America","15","90","-180","-30"]
         sAmerica = ["S. America","-90","15","-180","-30"]
-        africa =  ["Africa","-90","40","-30","50"]
-        europe = ["Europe","40","90","-30","50"]
+        africa =  ["Africa","-90","35","-30","50"]
+        europe = ["Europe","35","90","-30","50"]
         asia = ["Asia","-10","90","50","180"]
         australasia = ["Australasia","-90","-10","50","180"]
 

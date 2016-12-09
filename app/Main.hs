@@ -11,10 +11,11 @@ import RegionsDB
 main = do
 
 --Download json
-     d <- downloadURL "http://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=2016-11-01&endtime=2016-12-02"
+     d <- downloadURL "http://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=2016-11-01&endtime=2016-12-01"
      let earthquakeStrings = getEarthquakes d
      let earthquakeData = map makeEarthquake earthquakeStrings
 
+     deleteOldDb
 
      --Create db with events table
      initialiseDB
@@ -31,11 +32,6 @@ main = do
      putStrLn "Enter 1 for query by date or 2 for query by minimum magnitude"
      line <- getLine
      let decision = dateOrMag line
-
-
-     --db <- getWholeDB
-     --let dbContents = getDbContentsAsList db
-     --mapM_ print $ dbContents
 
 
      let userSelection = "Europe"
