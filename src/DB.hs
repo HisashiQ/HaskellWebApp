@@ -29,24 +29,28 @@ initialiseDB = do
   else
     return ()
 
-insertDB :: Earthquake -> IO ()
-insertDB event = do
-	if (validateEarthquake event == False) then putStrLn "A record was not parsed" else do
-																        conn <- dbConnect
-																        let query = "INSERT INTO events VALUES (?,?,?,?,?,?,?,?,?)"
-																        let record = [ toSql.year $ event
-																                , toSql.month $ event
-																                , toSql.day $ event
-																                , toSql.place $ event
-																                , toSql.magnitude $ event
-																                , toSql.latitude $ event
-																                , toSql.longitude $ event
-																                , toSql.depth $ event
-																                , toSql.url $ event
-																                ]
-																        run conn query record
-																        commit conn
-																        disconnect conn
+insertDB :: [Earthquake] -> IO ()
+insertDB events = do
+  let validEvents = filter validateEarthquake events
+  conn <- dbConnect
+  mapM_ (buildRecord conn) validEvents
+  commit conn
+  disconnect conn
+
+buildRecord :: IConnection conn => conn -> Earthquake -> IO Integer
+buildRecord conn event = do
+    let query = "INSERT INTO events VALUES (?,?,?,?,?,?,?,?,?)"
+    let record = [ toSql.year $ event
+                 , toSql.month $ event
+                 , toSql.day $ event
+                 , toSql.place $ event
+                 , toSql.magnitude $ event
+                 , toSql.latitude $ event
+                 , toSql.longitude $ event
+                 , toSql.depth $ event
+                 , toSql.url $ event
+                 ]       
+    run conn query record												        
 
     
 getFromDB :: String -> IO [[SqlValue]]

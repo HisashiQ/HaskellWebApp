@@ -12,16 +12,16 @@ import System.Process
 main = do
 
 --Download json
-     d <- downloadURL "http://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=2016-11-01&endtime=2016-12-01"
+     d <- downloadURL "http://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=2016-10-01&endtime=2016-12-01"
      let earthquakeStrings = getEarthquakes d
-     let earthquakeData = map makeEarthquake earthquakeStrings
+     let earthquakeData = map getEarthquakeData earthquakeStrings
 
      deleteOldDb
 
      --Create db with events table
      initialiseDB
      --insert earthquakes
-     mapM_ insertDB earthquakeData
+     insertDB earthquakeData
 
 
      --Add regions table to db

@@ -15,17 +15,23 @@ data Earthquake = Earthquake { year :: Maybe Int
                              , url :: String
                              } deriving Show 
 
-makeEarthquake :: String -> Earthquake
-makeEarthquake x = Earthquake { year = getYear $ (readMaybe $ take 10 $ getProperty "time" x)
-                              , month = getMonth $ (readMaybe $ take 10 $ getProperty "time" x)
-                              , day = getDay $ (readMaybe $ take 10 $ getProperty "time" x)
-                              , place = init.tail $ getProperty "place" x
-                              , magnitude = readMaybe $ getProperty "mag" x
-                              , longitude = (getCoordinates x) !! 0
-                              , latitude = (getCoordinates x) !! 1
-                              , depth = (getCoordinates x) !! 2
-                              , url = init.tail $ getProperty "url" x
-                              }
+getEarthquakeData :: String -> Earthquake
+getEarthquakeData rawString = makeEarthquake rawString rawTime coordinates
+    where
+      rawTime = take 10 $ getProperty "time" rawString
+      coordinates = getCoordinates rawString
+
+makeEarthquake :: String -> String -> [Maybe Double] -> Earthquake
+makeEarthquake rawString rawTime coordinates = Earthquake { year = getYear $ readMaybe $ rawTime
+                                                             , month = getMonth $ readMaybe $ rawTime
+                                                             , day = getDay $ readMaybe $ rawTime
+                                                             , place = init.tail $ getProperty "place" rawString
+                                                             , magnitude = readMaybe $ getProperty "mag" rawString
+                                                             , longitude = coordinates !! 0
+                                                             , latitude = coordinates !! 1
+                                                             , depth = coordinates !! 2
+                                                             , url = "-"
+                                                             }
 
 validateEarthquake :: Earthquake -> Bool
 validateEarthquake x
