@@ -6,18 +6,21 @@ import Types
 import System.Directory
 import Control.Monad
 
+-- This module is partly adapted from the lab7 solution
+
+-- Check to see if a database file already exists and deletes it
 deleteOldDb :: IO ()
 deleteOldDb = do
 	exists <- doesFileExist "earthquakes.db"
 	when exists (removeFile "earthquakes.db")
 
+-- Create database connection
 dbConnect :: IO Connection
 dbConnect = do
    conn <- connectSqlite3 "earthquakes.db"
    return conn
 
--- | Initialises the database creating tables
-
+-- Create the events table to hold earthquake records
 initialiseDB :: IO ()
 initialiseDB = do
   conn <- dbConnect
@@ -29,6 +32,7 @@ initialiseDB = do
   else
     return ()
 
+-- Insert all earthquakes into the database, the close the database
 insertDB :: [Earthquake] -> IO ()
 insertDB events = do
   let validEvents = filter validateEarthquake events
@@ -37,6 +41,7 @@ insertDB events = do
   commit conn
   disconnect conn
 
+-- Convert an Earthquake into an Sql record
 buildRecord :: IConnection conn => conn -> Earthquake -> IO Integer
 buildRecord conn event = do
     let query = "INSERT INTO events VALUES (?,?,?,?,?,?,?,?,?)"
@@ -52,20 +57,14 @@ buildRecord conn event = do
                  ]       
     run conn query record												        
 
-    
+-- Query the database and return a list of Sql records    
 getFromDB :: String -> IO [[SqlValue]]
 getFromDB xs = do
   conn <- dbConnect
   let query = "SELECT * FROM " ++ xs
   quickQuery' conn query []
 
--- getFromDB :: IO [[SqlValue]]
--- getFromDB = do
---   conn <- dbConnect
---   let query = "SELECT * FROM events"
---   quickQuery' conn query []
-
-
+-- Convert a list of Sql records into a list of Haskell strings
 getDbContentsAsList :: [[SqlValue]] -> [[String]]
 getDbContentsAsList x = map (map fromSql) x
 
@@ -86,13 +85,3 @@ getMonth x = x !! 1
 getDay x = x !! 2
 
 getFullJson a = createJson (map getMag a) (map getPlace a) (map getUrl a) (map getLat a) (map getLong a) (map getDepth a) (map getYear a) (map getMonth a) (map getDay a)
-
-{--getFromDB :: DBQuery -> IO [[SqlValue]] --Assuming we have a data type called "DBQuery"
-getFromDB request = do
-	conn <- dbConnect
-	--Get all earthquakes in a given date range
-	if (requestType request) == "date" then
-		let query = "SELECT * FROM events WHERE date >= " ++ (startDate request) ++ " AND date <= " ++ (endDate request)
-	else if a then b --What other query? Earthquakes in a given lat-long rectangle? Earthquakes on a given continent?
-    quickQuery conn query
-    disconnect conn--}

@@ -27,7 +27,6 @@ getUTC x = toUTCTime (Unix.toClockTime (fromEpochTime x))
 getYear Nothing = Nothing
 getYear (Just x) = Just (ctYear (getUTC x))
 
-
 getMonth Nothing = Nothing
 getMonth (Just x) = Just (monthInt (getUTC x))
   where monthInt x
