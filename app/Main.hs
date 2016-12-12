@@ -47,15 +47,16 @@ dateMagOrRegion line
         newline <- getLine
         dateMagOrRegion newline
 
-processUserInput :: String -> IO(String)
+processUserInput :: String -> IO()
 processUserInput x
       |(x == "date") = do 
             putStrLn "Enter a day (up to 31)"
             input1 <- getLine
-            putStrLn "Enter a month (after June) in number format e.g September = 09"
+            let intInput1 = read input1 :: Int
+            putStrLn "Enter a month: 1 for October, 2 for November"
             input2 <- getLine
-            --processDate input
-            return (input1++input2)
+            processDate intInput1 input2
+            return ()
       |(x == "magnitude") = do
             putStrLn "Enter a minimum magnitude from the following code:"
             putStrLn "1 = Minor (3 and up)"
@@ -66,7 +67,7 @@ processUserInput x
             putStrLn "6 = Great (8 and up)"
             input <- getLine
             processMagnitude input
-            return input
+            return ()
       |(x == "region") = do
             putStrLn "Enter a region by number:"
             putStrLn "1 = North America"
@@ -77,9 +78,23 @@ processUserInput x
             putStrLn "6 = Australasia"
             input <- getLine
             processRegion input
-            return input
+            return ()
 
---processDate :: String -> IO ()
+processDate :: Int -> String -> IO ()
+processDate day month
+  | (day == 31) = if (month == "1") then
+                     do (callDateDB day 10)
+                  else
+                    do
+                      putStrLn "Incorrect date. Please try again"
+                      processUserInput "date"
+                      return ()
+  | (day<32)&&(day>0)&&(month=="1") = do (callDateDB day 10)
+  | (day<32)&&(day>0)&&(month=="2") = do (callDateDB day 11)
+  | otherwise = do
+                 putStrLn "Incorrect date. Please try again"
+                 processUserInput "date"
+                 return ()
 
 processMagnitude :: String -> IO ()
 processMagnitude x
@@ -117,6 +132,11 @@ processRegion x
         processUserInput "region"
         return ()
 
+callDateDB :: Int -> Int -> IO ()
+callDateDB day month = do
+    matchingEarthquakes <- getFromDB $ "events WHERE day >= " ++ (show day) ++ " AND month >= " ++ (show month)
+    displayMap matchingEarthquakes
+
 callMagnitudeDB :: String -> IO ()
 callMagnitudeDB x = do
     matchingEarthquakes <- getFromDB $ "events WHERE magnitude >= "  ++ x
@@ -150,6 +170,6 @@ displayMap x = do
 
     --  f <- createProcess (proc "open /Users/quinn/Code/Haskell/HaskellEarthquakeMapper/index.html" [])
     --  r <- createProcess (proc "rm /Users/quinn/Code/Haskell/HaskellEarthquakeMapper/earthquakes.db" [])
-    --f <- createProcess (shell "rm /Users/quinn/Code/Haskell/HaskellEarthquakeMapper/earthquakes.db")
+    --- f <- createProcess (shell "rm /Users/quinn/Code/Haskell/HaskellEarthquakeMapper/earthquakes.db")
         r <- createProcess (shell "open index.html")
         putStrLn "Opening browser"

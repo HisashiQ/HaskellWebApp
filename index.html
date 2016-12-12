@@ -41,11 +41,12 @@
           var coords = results.features[i].geometry.coordinates;
           var mag = results.features[i].properties.mag;
           var place = results.features[i].properties.place;
+          var date = results.features[i].properties.time;
           var latLng = new google.maps.LatLng(coords[1],coords[0]);
           var marker = new google.maps.Marker({
             position: latLng,
             map: map,
-            title: "Magnitude: " + mag.toString() + "\n" + "Place: " + place.toString()
+            title: "Magnitude: " + mag.toString() + "\n" + "Place: " + place.toString() + "\n" + "Date: " + date
           });
         }
       }

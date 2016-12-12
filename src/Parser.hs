@@ -47,13 +47,3 @@ getMonth (Just x) = Just (monthInt (getUTC x))
 getDay Nothing = Nothing
 getDay (Just x) = Just (ctDay (getUTC x))
 
-
---Checks if want date or magnitude
-dateOrMag :: String -> IO (String)
-dateOrMag line
-    | (line == "1") = do (return "date")
-    | (line == "2") = do (return "magnitude")
-    | otherwise = do
-        putStrLn "Error, please enter again"
-        newline <- getLine
-        dateOrMag newline
