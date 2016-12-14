@@ -54,10 +54,10 @@ buildRecord conn event = do
                  , toSql.longitude $ event
                  , toSql.depth $ event
                  , toSql.url $ event
-                 ]       
-    run conn query record												        
+                 ]
+    run conn query record
 
--- | Query the database and return a list of Sql records    
+-- | Query the database and return a list of Sql records
 getFromDB :: String -> IO [[SqlValue]]
 getFromDB xs = do
   conn <- dbConnect
@@ -71,26 +71,27 @@ getDbContentsAsList x = map (map fromSql) x
 
 -- | Creates Json and concatenates magnitude, url, etc to the json object.
 -- Create Json is called recursively
+createJson :: [String] -> [String] -> [String] -> [String] -> [String] -> [String] -> [String] -> [String] -> [String] -> String
 createJson [] [] [] [] [] [] [] [] [] = ""
 createJson (x:xs) (k:ks) (b:bs) (y:ys) (z:zs) (a:as) (yr:yrs) (m:ms) (d:ds) = "{\"type\":\"Feature\",\"properties\":{\"mag\":" ++ x ++ ",\"place\":\"" ++ k ++ "\",\"time\":\"" ++ d ++ "-" ++ m ++ "-" ++ yr ++ "\",\"tz\":480,\"url\":\"" ++ b ++ "\",\"felt\":2,\"cdi\":3.4,\"mmi\":null,\"alert\":null,\"status\":\"REVIEWED\",\"tsunami\":null,\"sig\":\"449\",\"net\":\"us\",\"code\":\"c000csx3\",\"ids\":\",usc000csx3,\",\"sources\":\",us,\",\"types\":\",dyfi,eq-location-map,general-link,geoserve,historical-moment-tensor-map,historical-seismicity-map,nearby-cities,origin,p-wave-travel-times,phase-data,scitech-link,tectonic-summary,\"},\"geometry\":{\"type\":\"Point\",\"coordinates\":[" ++ y ++ "," ++ z ++ "," ++ a ++ "]},\"id\":\"usc000csx3\"}" ++ "," ++ (createJson xs ks bs ys zs as yrs ms ds)
 
--- | Get magnitude from the json
+-- | Get magnitude from the list of strings returned by the database
 getMag x = x !! 4
--- | Get URL from the json
+-- | Get URL from the list of strings returned by the database
 getUrl x =  x !! 8
--- | Get latitude from the json
+-- | Get latitude from the list of strings returned by the database
 getLat x = x !! 6
--- | Get longitude from the json
+-- | Get longitude from the list of strings returned by the database
 getLong x = x !! 5
--- | Get depth from the json
+-- | Get depth from the list of strings returned by the database
 getDepth x = x !! 7
--- | Get place from the json
+-- | Get place from the list of strings returned by the database
 getPlace x = x !! 3
--- | Get year from the json
+-- | Get year from the list of strings returned by the database
 getYear x = x !! 0
--- | Get month from the json
+-- | Get month from the list of strings returned by the database
 getMonth x = x !! 1
--- | Get day from the json
+-- | Get day from the list of strings returned by the database
 getDay x = x !! 2
 
 -- | Create and retrieve full json
