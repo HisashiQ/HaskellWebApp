@@ -8,19 +8,19 @@ import Control.Monad
 
 -- This module is partly adapted from the lab7 solution
 
--- Check to see if a database file already exists and deletes it
+-- | Check to see if a database file already exists and deletes it
 deleteOldDb :: IO ()
 deleteOldDb = do
 	exists <- doesFileExist "earthquakes.db"
 	when exists (removeFile "earthquakes.db")
 
--- Create database connection
+-- | Create database connection
 dbConnect :: IO Connection
 dbConnect = do
    conn <- connectSqlite3 "earthquakes.db"
    return conn
 
--- Create the events table to hold earthquake records
+-- | Create the events table to hold earthquake records
 initialiseDB :: IO ()
 initialiseDB = do
   conn <- dbConnect
@@ -32,7 +32,7 @@ initialiseDB = do
   else
     return ()
 
--- Insert all earthquakes into the database, the close the database
+-- | Insert all earthquakes into the database, the close the database
 insertDB :: [Earthquake] -> IO ()
 insertDB events = do
   let validEvents = filter validateEarthquake events
@@ -41,7 +41,7 @@ insertDB events = do
   commit conn
   disconnect conn
 
--- Convert an Earthquake into an Sql record
+-- | Convert an Earthquake into an Sql record
 buildRecord :: IConnection conn => conn -> Earthquake -> IO Integer
 buildRecord conn event = do
     let query = "INSERT INTO events VALUES (?,?,?,?,?,?,?,?,?)"
@@ -57,31 +57,41 @@ buildRecord conn event = do
                  ]       
     run conn query record												        
 
--- Query the database and return a list of Sql records    
+-- | Query the database and return a list of Sql records    
 getFromDB :: String -> IO [[SqlValue]]
 getFromDB xs = do
   conn <- dbConnect
   let query = "SELECT * FROM " ++ xs
   quickQuery' conn query []
 
--- Convert a list of Sql records into a list of Haskell strings
+-- | Convert a list of Sql records into a list of Haskell strings
 getDbContentsAsList :: [[SqlValue]] -> [[String]]
 getDbContentsAsList x = map (map fromSql) x
 
 
---Creates Json and concatinates magnitude, url etc to the json object.
--- Create Json is called recursivley
+-- | Creates Json and concatenates magnitude, url, etc to the json object.
+-- Create Json is called recursively
 createJson [] [] [] [] [] [] [] [] [] = ""
 createJson (x:xs) (k:ks) (b:bs) (y:ys) (z:zs) (a:as) (yr:yrs) (m:ms) (d:ds) = "{\"type\":\"Feature\",\"properties\":{\"mag\":" ++ x ++ ",\"place\":\"" ++ k ++ "\",\"time\":\"" ++ d ++ "-" ++ m ++ "-" ++ yr ++ "\",\"tz\":480,\"url\":\"" ++ b ++ "\",\"felt\":2,\"cdi\":3.4,\"mmi\":null,\"alert\":null,\"status\":\"REVIEWED\",\"tsunami\":null,\"sig\":\"449\",\"net\":\"us\",\"code\":\"c000csx3\",\"ids\":\",usc000csx3,\",\"sources\":\",us,\",\"types\":\",dyfi,eq-location-map,general-link,geoserve,historical-moment-tensor-map,historical-seismicity-map,nearby-cities,origin,p-wave-travel-times,phase-data,scitech-link,tectonic-summary,\"},\"geometry\":{\"type\":\"Point\",\"coordinates\":[" ++ y ++ "," ++ z ++ "," ++ a ++ "]},\"id\":\"usc000csx3\"}" ++ "," ++ (createJson xs ks bs ys zs as yrs ms ds)
 
+-- | Get magnitude from the json
 getMag x = x !! 4
+-- | Get URL from the json
 getUrl x =  x !! 8
+-- | Get latitude from the json
 getLat x = x !! 6
+-- | Get longitude from the json
 getLong x = x !! 5
+-- | Get depth from the json
 getDepth x = x !! 7
+-- | Get place from the json
 getPlace x = x !! 3
+-- | Get year from the json
 getYear x = x !! 0
+-- | Get month from the json
 getMonth x = x !! 1
+-- | Get day from the json
 getDay x = x !! 2
 
+-- | Create and retrieve full json
 getFullJson a = createJson (map getMag a) (map getPlace a) (map getUrl a) (map getLat a) (map getLong a) (map getDepth a) (map getYear a) (map getMonth a) (map getDay a)

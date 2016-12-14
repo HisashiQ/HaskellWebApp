@@ -8,25 +8,28 @@ import Text.Read
 import Data.Maybe
 
 
---Takes the result of the http download and produces a list of raw earthquake data strings
+-- | Takes the result of the http download and produces a list of raw earthquake data strings
 getEarthquakes :: Either String String -> [String]
 getEarthquakes (Left _) = ["Parsing error"]
 getEarthquakes (Right x) = init $ tail (splitOn "\"type\":\"Feature\"" x)
 
---Takes a raw earthquake string and returns a property value
+-- | Takes a raw earthquake string and returns a property value
 getProperty :: String -> String -> String
 getProperty a b = head $ splitOn ",\"" $ last $ splitOn property b
     where property = "\"" ++ a ++ "\":"
 
---Takes a raw earthquake string and returns a list of floats showing coordinates
+-- | Takes a raw earthquake string and returns a list of floats showing coordinates
 getCoordinates :: String -> [Maybe Double]
 getCoordinates x = map readMaybe $ splitOn "," (init.init.tail $ getProperty "coordinates" x)
 
+-- | Converts data from Epoch time to UTC time
 getUTC x = toUTCTime (Unix.toClockTime (fromEpochTime x))
 
+-- | Return the year from Epoch time
 getYear Nothing = Nothing
 getYear (Just x) = Just (ctYear (getUTC x))
 
+-- | Return the month from Epoch time
 getMonth Nothing = Nothing
 getMonth (Just x) = Just (monthInt (getUTC x))
   where monthInt x
@@ -43,6 +46,7 @@ getMonth (Just x) = Just (monthInt (getUTC x))
            | ctMonth x == November = 11
            | ctMonth x == December = 12
 
+-- | Return the day from Epoch time
 getDay Nothing = Nothing
 getDay (Just x) = Just (ctDay (getUTC x))
 

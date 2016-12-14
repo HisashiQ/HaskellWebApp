@@ -7,8 +7,7 @@ import Database.HDBC
 import Data.Maybe
 import Data.Either
 
--- This module is adapted from the lab7 solution
-
+-- | Download a URL and return an error if it is a bad request
 downloadURL :: String -> IO (Either String String)
 downloadURL url =
     do response <- simpleHTTP request

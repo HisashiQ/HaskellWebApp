@@ -6,7 +6,7 @@ import DB
 import Types
 
 
--- Create the regions table to hold region location information. The database is created previously.
+-- | Create the regions table to hold region location information. The database is created previously.
 createRegionsTable :: IO ()
 createRegionsTable = do
 	conn <- dbConnect
@@ -18,7 +18,7 @@ createRegionsTable = do
 	else
 		return ()
 
--- Initialise all of the regions
+-- | Initialise all of the regions
 createRegions :: [Region]
 createRegions = map makeRegion [nAmerica,sAmerica,africa,europe,asia,australasia]
     where
@@ -29,7 +29,7 @@ createRegions = map makeRegion [nAmerica,sAmerica,africa,europe,asia,australasia
         asia = ["Asia","-10","90","50","180"]
         australasia = ["Australasia","-90","-10","50","180"]
 
--- Insert region to regions table
+-- | Insert region to regions table
 insertRegion :: Region -> IO ()
 insertRegion region = do
 	conn <- dbConnect

@@ -11,32 +11,34 @@ import System.Process
 
 main = do
 
---Download json
+     -- Download json
      d <- downloadURL "http://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=2016-10-01&endtime=2016-12-01"
      let earthquakeStrings = getEarthquakes d
      let earthquakeData = map getEarthquakeData earthquakeStrings
-
+     
+     -- Delete the previous json we created
      deleteOldDb
 
-     --Create db with events table
+     -- Create database with events table
      initialiseDB
-     --insert earthquakes
+     -- Insert earthquakes into database
      insertDB earthquakeData
 
 
-     --Add regions table to db
+     -- Add regions table to database
      createRegionsTable
-     --insert regions
+     -- Insert regions
      let regions = createRegions
      mapM_ insertRegion regions
 
-     --Ask user to query by region, date or magnitude
+     -- Ask user to query by region, date or magnitude
      putStrLn "Enter 1 for query by date, 2 for query by minimum magnitude or 3 for query by region"
      line <- getLine
+     -- Process the input and return the map
      dateMagOrRegion line >>= processUserInput
 
 
---Checks if want date or magnitude
+-- | Takes the user input of 1, 2 or 3 and returns date, magnitude or region
 dateMagOrRegion :: String -> IO (String)
 dateMagOrRegion line
     | (line == "1") = do (return "date")
@@ -47,6 +49,7 @@ dateMagOrRegion line
         newline <- getLine
         dateMagOrRegion newline
 
+-- | Processes date, magnitude or region as string and takes more specific input. Returns an IO action and catches input errors
 processUserInput :: String -> IO()
 processUserInput x
       |(x == "date") = do 
@@ -80,6 +83,7 @@ processUserInput x
             processRegion input
             return ()
 
+-- | Processes date information given and queries the database. Catches any errors
 processDate :: Int -> String -> IO ()
 processDate day month
   | (day == 31) = if (month == "1") then
@@ -96,6 +100,7 @@ processDate day month
                  processUserInput "date"
                  return ()
 
+-- | Processes magnitude information given and queries the database. Catches any errors
 processMagnitude :: String -> IO ()
 processMagnitude x
   | (x == "1") = do
@@ -113,6 +118,7 @@ processMagnitude x
   | otherwise = do
   	              putStrLn "error"
 
+-- | Processes region information given and queries the database. Catches any errors
 processRegion :: String -> IO ()
 processRegion x
   | (x=="1") = do
@@ -132,22 +138,23 @@ processRegion x
         processUserInput "region"
         return ()
 
+-- | Query the database by date
 callDateDB :: Int -> Int -> IO ()
 callDateDB day month = do
     matchingEarthquakes <- getFromDB $ "events WHERE day >= " ++ (show day) ++ " AND month >= " ++ (show month)
     displayMap matchingEarthquakes
 
+-- | Query the database by magnitude
 callMagnitudeDB :: String -> IO ()
 callMagnitudeDB x = do
     matchingEarthquakes <- getFromDB $ "events WHERE magnitude >= "  ++ x
-    --mapM_ print $ getDbContentsAsList matchingEarthquakes
     displayMap matchingEarthquakes
 
+-- | Query the database by region
 callRegionDB :: String -> IO ()
 callRegionDB x = do
-    --get selected region from database and create region
+    -- get selected region from database and create region
     regionDb <- getFromDB $ "regions WHERE region == \"" ++ x ++ "\""
-     --regionDb <- getFromDB $ "regions"
     let r = map makeRegion $ getDbContentsAsList regionDb
      --get lat/long values as strings
     let a = show $ latFrom $ head r
@@ -156,20 +163,14 @@ callRegionDB x = do
     let d = show $ longTo $ head r
     --get earthquakes in given region
     matchingEarthquakes <- getFromDB $ "events WHERE latitude >= " ++ a ++ " AND latitude < " ++ b ++ " AND longitude >= " ++ c ++ " AND longitude < " ++ d
-    --matchingEarthquakes <- getFromDB
-    --print out matching earthquakes
-    --mapM_ print $ getDbContentsAsList matchingEarthquakes
     displayMap matchingEarthquakes
 
+-- | Display a map of queried data in browser
 displayMap :: [[SqlValue]] -> IO ()
 displayMap x = do
 	let listOfInfo = getDbContentsAsList x
         writeFile "earthquakeMap.json" "eqfeed_callback({'type':'FeatureCollection','features':["
         appendFile "earthquakeMap.json" (getFullJson listOfInfo)
         appendFile "earthquakeMap.json" "]});"
-
-    --  f <- createProcess (proc "open /Users/quinn/Code/Haskell/HaskellEarthquakeMapper/index.html" [])
-    --  r <- createProcess (proc "rm /Users/quinn/Code/Haskell/HaskellEarthquakeMapper/earthquakes.db" [])
-    --- f <- createProcess (shell "rm /Users/quinn/Code/Haskell/HaskellEarthquakeMapper/earthquakes.db")
         r <- createProcess (shell "open index.html")
         putStrLn "Opening browser"
