@@ -1,1 +1,3 @@
-Haskell Earthquake mapper, by Quinn, Holly and Joe
+An earthquake mapper using the Google Maps API, sqlite DB and Haskell.
+
+Collaborative project to learn Haskell and functional programming
